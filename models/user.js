@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       models.User.hasOne(models.Profile,{
-        onDelete: 'CASCADE'
+        onDelete: 'CASCADE' 
       });
     }
 

@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.INTEGER,
     },
+    nom: DataTypes.STRING,
     commentaires: DataTypes.ARRAY(DataTypes.INTEGER),
     photos: DataTypes.ARRAY(DataTypes.INTEGER)
   }, {
