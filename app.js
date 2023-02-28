@@ -8,6 +8,8 @@ const {sequelize, Sequelize} = require('./models/index');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const profileRouter = require('./routes/profiles');
+const planteRouter = require('./routes/plantes');
+
 var app = express();
 
 sequelize.sync();
@@ -31,6 +33,7 @@ app.use((req, res, next) => {
 app.use('/', indexRouter);
 app.use('/', usersRouter);
 app.use('/profiles', profileRouter);
+app.use('/plantes', planteRouter);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // catch 404 and forward to error handler

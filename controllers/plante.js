@@ -1,7 +1,7 @@
-const db = require('../models');
+const {Sequelize,sequelize, Plante, Profile} = require('../models');
 
 // Create a new plant
-exports.create = (req, res) => {
+exports.postPlante = (req, res) => {
   // Validate request
   if (!req.body.nom) {
     res.status(400).send({
@@ -12,17 +12,23 @@ exports.create = (req, res) => {
 
   // Create a plant object
   const plant = {
-    ProfileId: req.body.ProfileId,
-    MissionId: req.body.MissionId,
     nom: req.body.nom,
-    commentaires: req.body.commentaires,
-    photos: req.body.photos
   };
 
   // Save plant in the database
-  db.Plante.create(plant)
-    .then(data => {
-      res.send(data);
+  Profile.findOne({where: {userUid: res.locals.userId}}).then(profile => {
+    if(!profile) {
+      res.status(500).json({message : "Pas de profil trouvé"});
+    }
+    Plante.create({...plant,ProfileId: profile.id})
+      .then(planteCreated => {
+
+        //profile.setPlante(planteCreated);
+
+        Profile.update({...profile,PlanteId:planteCreated.id}, {where: {userUid: res.locals.userId}}).then(() => {
+          res.send(planteCreated);
+        });
+      });
     })
     .catch(err => {
       res.status(500).send({
@@ -34,7 +40,7 @@ exports.create = (req, res) => {
 
 // Retrieve all plants from the database
 exports.findAll = (req, res) => {
-  db.Plante.findAll({ include: ['Mission', 'Profile'] })
+  Plante.findAll({ include: ['Mission', 'Profile'] })
     .then(data => {
       res.send(data);
     })
@@ -50,7 +56,7 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  db.Plante.findByPk(id, { include: ['Mission', 'Profile', 'Commentaire'] })
+  Plante.findByPk(id, { include: ['Mission', 'Profile', 'Commentaire'] })
     .then(data => {
       if (!data) {
         res.status(404).send({
@@ -68,11 +74,14 @@ exports.findOne = (req, res) => {
 };
 
 // Update a plant by its id
-exports.update = (req, res) => {
-  const id = req.params.id;
+exports.editPlante = (req, res) => {
 
-  db.Plante.update(req.body, {
-    where: { id: id }
+  const plant = {
+    nom: req.body.nom,
+  };
+
+  Plante.update({...plant}, {
+    where: { id: req.params.id }
   })
     .then(num => {
       if (num == 1) {
@@ -81,13 +90,13 @@ exports.update = (req, res) => {
         });
       } else {
         res.send({
-          message: "Impossible de mettre à jour la plante avec l'ID " + id + ". Peut-être que la plante n'a pas été trouvée ou que les données à mettre à jour sont vides."
+          message: "Impossible de mettre à jour la plante avec l'ID " + req.params.id + ". Peut-être que la plante n'a pas été trouvée ou que les données à mettre à jour sont vides."
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Erreur lors de la mise à jour de la plante avec l'ID " + id
+        message: "Erreur lors de la mise à jour de la plante avec l'ID " + req.params.id
       });
     });
 };
@@ -96,7 +105,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  db.Plante.destroy({
+  Plante.destroy({
     where: { id: id }
   })
     .then(num => {

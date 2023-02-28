@@ -20,12 +20,6 @@ module.exports = (sequelize, DataTypes) => {
   User.init({
     ProfileId:{
       type: DataTypes.INTEGER,
-      references: {
-        model: 'Profile',
-        key: 'id',
-      },
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE',
     },
     uid:{
       type: DataTypes.UUID,
