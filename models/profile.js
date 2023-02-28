@@ -11,6 +11,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       models.Profile.belongsTo(models.User);
+      models.Profile.hasOne(models.Mission,{
+        onDelete: 'CASCADE' 
+      })
+      models.Profile.hasMany(models.Commentaire,{
+        onDelete: 'CASCADE' 
+      });
+      models.Profile.hasMany(models.Plante,{
+        onDelete: 'CASCADE' 
+      });
     }
   }
   Profile.init({

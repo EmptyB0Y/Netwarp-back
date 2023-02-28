@@ -10,7 +10,11 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      models.Plante.belongsTo(models.Mission);
+      models.Plante.belongsTo(models.Profile);
+      models.Plante.hasMany(models.Commentaire,{
+        onDelete: 'CASCADE' 
+      });
     }
   }
   Plante.init({
@@ -24,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     nom: DataTypes.STRING,
     commentaires: DataTypes.ARRAY(DataTypes.INTEGER),
-    photos: DataTypes.ARRAY(DataTypes.INTEGER)
+    photos: DataTypes.ARRAY(DataTypes.STRING)
   }, {
     sequelize,
     modelName: 'Plante',
