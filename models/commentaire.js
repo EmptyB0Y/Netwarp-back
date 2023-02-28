@@ -10,18 +10,34 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      models.Commentaire.belongsTo(models.Plante);
-      models.Commentaire.belongsTo(models.Profile);
+      models.Commentaire.belongsTo(models.Plante,{
+        onDelete: 'CASCADE' 
+      });
+      models.Commentaire.belongsTo(models.Profile),{
+        onDelete: 'CASCADE' 
+      };
     }
   }
   Commentaire.init({
     ProfileId: {
       allowNull: false,
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,      
+      references: {
+        model: 'Profile',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     PlanteId:{
       allowNull: false,
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Plante',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     content:{
       allowNull: false,

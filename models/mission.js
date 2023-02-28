@@ -10,7 +10,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      models.Mission.belongsTo(models.Profile);
+      models.Mission.belongsTo(models.Profile,{
+        onDelete: 'CASCADE' 
+      });
       models.Mission.hasMany(models.Plante,{
         onDelete: 'CASCADE' 
       });

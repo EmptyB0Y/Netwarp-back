@@ -10,10 +10,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      models.Plante.belongsTo(models.Mission);
-      models.Plante.belongsTo(models.Profile);
-      models.Plante.hasMany(models.Commentaire,{
+      models.Plante.belongsTo(models.Profile,{
         onDelete: 'CASCADE' 
+      });
+      models.Plante.belongsTo(models.Mission,{
+        onDelete: 'CASCADE' 
+      });
+      models.Plante.hasMany(models.Commentaire,{
+        onDelete: 'CASCADE'
       });
     }
   }
@@ -23,13 +27,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
     },
     MissionId:{
-      allowNull: false,
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER
     },
-    nom: DataTypes.STRING,
-    commentaires: DataTypes.ARRAY(DataTypes.INTEGER),
-    photos: DataTypes.ARRAY(DataTypes.STRING)
-  }, {
+    nom: {
+      type: DataTypes.STRING
+    },
+    photos: { 
+      type: DataTypes.ARRAY(DataTypes.INTEGER)
+    }
+    }, {
     sequelize,
     modelName: 'Plante',
   });

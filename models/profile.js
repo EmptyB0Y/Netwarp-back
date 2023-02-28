@@ -10,7 +10,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      models.Profile.belongsTo(models.User);
+      models.Profile.belongsTo(models.User,{
+        onDelete: 'CASCADE' 
+      });
       models.Profile.hasOne(models.Mission,{
         onDelete: 'CASCADE' 
       })
@@ -25,6 +27,15 @@ module.exports = (sequelize, DataTypes) => {
   Profile.init({
     UserId:{
        type: DataTypes.INTEGER,
+    },
+    PlanteId:{
+      type: DataTypes.INTEGER,
+    },
+    CommentaireId:{
+      type: DataTypes.INTEGER,
+    },
+    MissionId:{
+      type: DataTypes.INTEGER,
     },
     userUid:{
       type: DataTypes.UUID,
