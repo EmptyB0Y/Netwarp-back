@@ -20,7 +20,6 @@ module.exports = (sequelize, DataTypes) => {
   }
   Mission.init({
     ProfileId:{
-      allowNull: false,
       type: DataTypes.INTEGER,
     },
     PlanteId:{
@@ -39,6 +38,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.DATE
     },
+    accomplie:{
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    }
   }, {
     sequelize,
     modelName: 'Mission',

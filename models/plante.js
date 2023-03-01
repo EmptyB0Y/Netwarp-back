@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
   Plante.init({
     ProfileId: {
       allowNull: false,
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER
     },
     MissionId:{
       type: DataTypes.INTEGER
@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING
     },
     photos: { 
-      type: DataTypes.ARRAY(DataTypes.STRING)
+      type: DataTypes.STRING
     }
     }, {
     sequelize,
