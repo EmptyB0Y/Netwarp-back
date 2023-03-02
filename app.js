@@ -10,6 +10,7 @@ const usersRouter = require('./routes/users');
 const profileRouter = require('./routes/profiles');
 const planteRouter = require('./routes/plantes');
 const missionRouter = require('./routes/missions');
+const commentaireRouter = require('./routes/commentaires');
 
 var app = express();
 
@@ -36,6 +37,7 @@ app.use('/', usersRouter);
 app.use('/profiles', profileRouter);
 app.use('/plantes', planteRouter);
 app.use('/missions', missionRouter);
+app.use('/commentaires', commentaireRouter);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // catch 404 and forward to error handler

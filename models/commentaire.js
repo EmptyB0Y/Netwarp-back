@@ -21,23 +21,11 @@ module.exports = (sequelize, DataTypes) => {
   Commentaire.init({
     ProfileId: {
       allowNull: false,
-      type: DataTypes.INTEGER,      
-      references: {
-        model: 'Profile',
-        key: 'id',
-      },
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE',
+      type: DataTypes.INTEGER
     },
     PlanteId:{
       allowNull: false,
-      type: DataTypes.INTEGER,
-      references: {
-        model: 'Plante',
-        key: 'id',
-      },
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE',
+      type: DataTypes.INTEGER
     },
     content:{
       allowNull: false,

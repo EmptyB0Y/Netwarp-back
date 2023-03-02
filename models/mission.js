@@ -16,6 +16,9 @@ module.exports = (sequelize, DataTypes) => {
       models.Mission.hasMany(models.Plante,{
         onDelete: 'CASCADE' 
       });
+      models.Mission.hasMany(models.Photo,{
+        onDelete: 'CASCADE' 
+      });
     }
   }
   Mission.init({

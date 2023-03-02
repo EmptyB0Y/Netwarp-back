@@ -1,4 +1,4 @@
-const { Sequelize,sequelize, Mission, Plante, Profile } = require('../models');
+const { Sequelize,sequelize, Mission, Plante, Profile, Photo } = require('../models');
 
 // create a mission
 exports.createMission = async (req, res) => {
@@ -141,6 +141,57 @@ exports.deleteMission = async (req, res) => {
       res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
     }
     await mission.destroy();
+    res.status(204).json();
+  } catch (error) {
+    console.error(err);
+    res.status(500).json({ error : err });
+  }
+};
+
+exports.uploadPhoto = async (req, res) => {
+  const { id } = req.params;
+  try {
+    let mission = await Mission.findByPk(id);
+    if (!mission) {
+      return res.status(404).json({ message: 'Mission non trouvée' });
+    }
+    if(!req.file){
+      return res.status(400).json({ message: 'Fichier manquant' });
+    }
+
+    let plante = await Plante.findByPk(mission.PlanteId);
+    let profile = await Profile.findByPk(plante.ProfileId);
+    if(profile.userUid !== res.locals.userId && !res.locals.isAdmin){
+      res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
+    }
+
+    let photo = await Photo.create({
+      MissionId: mission.id,
+      url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    });
+
+    res.status(201).json(photo);
+  } catch (error) {
+    console.error(err);
+    res.status(500).json({ error : err });
+  }
+};
+
+exports.deletePhoto = async (req, res) => {
+  const { id } = req.params;
+  try {
+    let photo = await Photo.findByPk(id);
+    let mission = await Mission.findByPk(photo.MissionId);
+
+    if (!mission) {
+      return res.status(404).json({ message: 'Mission non trouvée' });
+    }
+    let plante = await Plante.findByPk(mission.PlanteId);
+    let profile = await Profile.findByPk(plante.ProfileId);
+    if(profile.userUid !== res.locals.userId && !res.locals.isAdmin){
+      res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
+    }
+    await photo.destroy();
     res.status(204).json();
   } catch (error) {
     console.error(err);

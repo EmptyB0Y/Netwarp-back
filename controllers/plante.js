@@ -1,4 +1,4 @@
-const {Sequelize,sequelize, Plante, Profile} = require('../models');
+const {Sequelize,sequelize, Plante, Profile, Photo} = require('../models');
 
 // Create a new plant
 exports.postPlante = (req, res) => {
@@ -73,10 +73,13 @@ exports.findOne = (req, res) => {
 // Update a plant by its id
 exports.editPlante = (req, res) => {
 
-  const plant = {
+  let plant = {
     nom: req.body.nom,
   };
 
+  if (!req.file) {
+
+  }
   Plante.update({...plant}, {
     where: { id: req.params.id }
   })
@@ -119,4 +122,54 @@ exports.delete = (req, res) => {
     .catch(err => {
       res.status(500)
     })
-}
+};
+
+exports.uploadPhoto = async (req, res) => {
+  const { id } = req.params;
+  try {
+    let plante = await Plante.findByPk(id);
+    if (!plante) {
+      return res.status(404).json({ message: 'Plante non trouvée' });
+    }
+    if(!req.file){
+      return res.status(400).json({ message: 'Fichier manquant' });
+    }
+
+    let profile = await Profile.findByPk(plante.ProfileId);
+    if(profile.userUid !== res.locals.userId && !res.locals.isAdmin){
+      res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
+    }
+
+    let photo = await Photo.create({
+      PlanteId: plante.id,
+      url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    });
+
+    res.status(201).json(photo);
+  } catch (error) {
+    console.error(err);
+    res.status(500).json({ error : err });
+  }
+};
+
+exports.deletePhoto = async (req, res) => {
+  const { id } = req.params;
+  try {
+    let photo = await Photo.findByPk(id);
+    let plante = await Plante.findByPk(photo.MissionId);
+
+    if (!plante) {
+      return res.status(404).json({ message: 'Plante non trouvée' });
+    }
+
+    let profile = await Profile.findByPk(plante.ProfileId);
+    if(profile.userUid !== res.locals.userId && !res.locals.isAdmin){
+      res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
+    }
+    await photo.destroy();
+    res.status(204).json();
+  } catch (error) {
+    console.error(err);
+    res.status(500).json({ error : err });
+  }
+};
