@@ -22,12 +22,9 @@ exports.postPlante = (req, res) => {
     }
     Plante.create({...plant,ProfileId: profile.id})
       .then(planteCreated => {
-
-        //profile.setPlante(planteCreated);
-
-        Profile.update({...profile,PlanteId:planteCreated.id}, {where: {userUid: res.locals.userId}}).then(() => {
+        //Profile.update({...profile,PlanteId:planteCreated.id}, {where: {userUid: res.locals.userId}}).then(() => {
           res.send(planteCreated);
-        });
+        //});
       });
     })
     .catch(err => {

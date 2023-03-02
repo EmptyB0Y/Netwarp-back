@@ -28,9 +28,6 @@ module.exports = (sequelize, DataTypes) => {
     UserId:{
        type: DataTypes.INTEGER,
     },
-    PlanteId:{
-      type: DataTypes.INTEGER,
-    },
     CommentaireId:{
       type: DataTypes.INTEGER,
     },

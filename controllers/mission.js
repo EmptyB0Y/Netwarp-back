@@ -21,6 +21,7 @@ exports.createMission = async (req, res) => {
         accomplie: false
       };
       let mission = await Mission.create(missionCreated);
+      await Plante.update({MissionId : mission.id},{where: {id: req.body.planteId}});
       res.status(201).json(mission);
     } catch(err){
       res.status(500).json({ error : err });
@@ -30,30 +31,33 @@ exports.createMission = async (req, res) => {
 // get all missions
 exports.getAllMissions = async (req, res) => {
   try {
-    if(req.params.get("view") == "admin"){
+
+    if(req.param("view") == "admin"){
       if(!res.locals.isAdmin){
         res.status(403).json({ message: 'Vous ne pouvez pas accéder à la vue admin mission' });
       }
+      
       else{
         let missions = await Mission.findAll();
-        res.json(missions)
+        res.status(200).json(missions)
       }
     }
-    else if(req.params.get("view") == "caretaker") {
+    else if(req.param("view") == "caretaker") {
       let profile = await Profile.findOne({where: {userUid: res.locals.userId}});
       let missions = await Mission.findAll({where: {ProfileId: profile.id}});
-      res.json(missions);
+      res.status(200).json(missions);
     }
-    else if(req.params.get("view") == "owner"){
+    else if(req.param("view") == "owner"){
       let profile = await Profile.findOne({where: {userUid: res.locals.userId}});
       let plantes = await Plante.findAll({where: {ProfileId: profile.id}});
       let missions = [];
-      plantes.forEach(plante => {
-        Mission.findAll({where: {PlanteId: plante.id}}).then(mission => {
-          missions.push(mission);
-        })
-      });
-      res.json(missions);
+      
+      await Promise.all(plantes.map(async (plante) => {
+        let planteMissions = await Mission.findAll({ where: { PlanteId: plante.id }, include: ['Profile'] });
+        missions.push(...planteMissions);
+      }));
+      res.status(200).json(missions);
+
     }
 
   } catch (error) {
@@ -111,6 +115,9 @@ exports.editMission = async (req, res) => {
       res.status(403).json({ message: 'Mission et Plante le peuvent pas avoir le même ProfileId' });
     }
     await mission.update({...missionUpdated },{where:{id : id}});
+    if(missionUpdated.PlanteId !== mission.PlanteId){
+      await Plante.update({MissionId : mission.id},{where: {id: req.body.planteId}});
+    }
 
 
     res.json(mission);
