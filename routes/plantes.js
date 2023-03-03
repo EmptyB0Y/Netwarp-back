@@ -10,6 +10,6 @@ router.get('/:id', auth, planteCtrl.findOne);
 router.post('/', auth, upload, planteCtrl.postPlante);
 router.put('/:id', auth, upload, planteCtrl.editPlante);
 router.post('/:id/upload-photo', auth, upload, planteCtrl.uploadPhoto);
-router.delete('/:id/delete-photo/:id', auth, planteCtrl.deletePhoto);
+router.delete('/delete-photo/:id', auth, planteCtrl.deletePhoto);
 
 module.exports = router;

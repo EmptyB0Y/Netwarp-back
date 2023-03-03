@@ -70,6 +70,10 @@ exports.editProfile = (req, res) => {
     username: req.body.username
     };
     
+    if(res.locals.isAdmin && req.body.isBotaniste){
+      ProfileUpdated.isBotaniste = true
+    }
+
     if(req.file){
       ProfileUpdated.pictureUrl = `${req.protocol}://${req.get('host')}/pictures/${req.file.filename}`;
     }

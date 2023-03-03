@@ -34,6 +34,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     nom: {
       type: DataTypes.STRING
+    },
+    categorie: {
+      type: DataTypes.STRING
     }
     }, {
     sequelize,

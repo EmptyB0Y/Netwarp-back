@@ -10,6 +10,6 @@ router.get('/:id', auth, missionCtrl.getMissionById);
 router.post('/', auth, missionCtrl.createMission);
 router.put('/:id', auth, missionCtrl.editMission);
 router.post('/:id/upload-photo', auth, upload, missionCtrl.uploadPhoto);
-router.delete('/:id/delete-photo/:id', auth, missionCtrl.deletePhoto);
+router.delete('/delete-photo/:id', auth, missionCtrl.deletePhoto);
 
 module.exports = router;

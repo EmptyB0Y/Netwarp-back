@@ -1,4 +1,5 @@
 const { Sequelize,sequelize, Mission, Plante, Profile, Photo } = require('../models');
+const fs = require('fs');
 
 // create a mission
 exports.createMission = async (req, res) => {
@@ -191,6 +192,11 @@ exports.deletePhoto = async (req, res) => {
     if(profile.userUid !== res.locals.userId && !res.locals.isAdmin){
       res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
     }
+    fs.unlink('./images/' + photo.url.split('/images/')[1], (err) => {
+      if (err) {
+        console.error(err)
+      }
+    })
     await photo.destroy();
     res.status(204).json();
   } catch (error) {

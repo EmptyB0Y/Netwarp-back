@@ -1,4 +1,5 @@
 const {Sequelize,sequelize, Plante, Profile, Photo} = require('../models');
+const fs = require('fs');
 
 // Create a new plant
 exports.postPlante = (req, res) => {
@@ -125,6 +126,7 @@ exports.delete = (req, res) => {
 };
 
 exports.uploadPhoto = async (req, res) => {
+
   const { id } = req.params;
   try {
     let plante = await Plante.findByPk(id);
@@ -156,7 +158,7 @@ exports.deletePhoto = async (req, res) => {
   const { id } = req.params;
   try {
     let photo = await Photo.findByPk(id);
-    let plante = await Plante.findByPk(photo.MissionId);
+    let plante = await Plante.findByPk(photo.PlanteId);
 
     if (!plante) {
       return res.status(404).json({ message: 'Plante non trouvée' });
@@ -166,6 +168,11 @@ exports.deletePhoto = async (req, res) => {
     if(profile.userUid !== res.locals.userId && !res.locals.isAdmin){
       res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
     }
+    fs.unlink('./images/' + photo.url.split('/images/')[1], (err) => {
+      if (err) {
+        console.error(err)
+      }
+    })
     await photo.destroy();
     res.status(204).json();
   } catch (error) {
