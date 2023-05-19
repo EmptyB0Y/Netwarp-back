@@ -38,9 +38,9 @@ exports.postPlante = (req, res) => {
 
 // Retrieve all plants from the database
 exports.findAll = (req, res) => {
-  Plante.findAll({ include: ['Mission', 'Profile'] })
-    .then(data => {
-      res.send(data);
+  Plante.findAll({where:{ProfileId : req.params.id}, include: ['Mission', 'Profile'] })
+    .then(plantes => {
+      res.status(200).send(plantes);
     })
     .catch(err => {
       res.status(500).send({
