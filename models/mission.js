@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       models.Mission.belongsTo(models.Profile,{
         onDelete: 'CASCADE' 
       });
-      models.Mission.hasMany(models.Plante,{
+      models.Mission.hasMany(models.Post,{
         onDelete: 'CASCADE' 
       });
       models.Mission.hasMany(models.Photo,{
@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     ProfileId:{
       type: DataTypes.INTEGER,
     },
-    PlanteId:{
+    PostId:{
       allowNull: false,
       type: DataTypes.INTEGER,
     },

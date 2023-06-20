@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      models.Photo.belongsTo(models.Plante,{
+      models.Photo.belongsTo(models.Post,{
         onDelete: 'CASCADE' 
       });
       models.Photo.belongsTo(models.Mission),{
@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Photo.init({
-    PlanteId:{
+    PostId:{
       type: DataTypes.INTEGER
     },
     MissionId: {

@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       models.Profile.hasMany(models.Commentaire,{
         onDelete: 'CASCADE' 
       });
-      models.Profile.hasMany(models.Plante,{
+      models.Profile.hasMany(models.Post,{
         onDelete: 'CASCADE' 
       });
     }

@@ -19,18 +19,8 @@ getAuthorizedAdminIps = () =>{
   return tab;
 }
 
-async function createUser(email,hash,access){
-  console.log(body,hash,access)
-
-  const userCreated = await User.create({
-    email: email,
-    password: hash,
-    access: access
-  });
-  return userCreated;
-}
-
 exports.login = (req,res) =>{
+  console.log(req.headers);
   if (!req.body.email || !req.body.password) {
     return res.status(400).send(new Error('Bad request!'));
   }
@@ -47,7 +37,8 @@ exports.login = (req,res) =>{
             { userId: user.uid },
             process.env.JSON_TOKEN,
             { expiresIn: '24h' }
-          )    
+          ),
+          profileId: user.ProfileId
         });
       })
       .catch(error => res.status(500).json({ error }));

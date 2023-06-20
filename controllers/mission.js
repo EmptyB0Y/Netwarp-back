@@ -1,28 +1,28 @@
-const { Sequelize,sequelize, Mission, Plante, Profile, Photo } = require('../models');
+const { Sequelize,sequelize, Mission, Post, Profile, Photo } = require('../models');
 const fs = require('fs');
 
 // create a mission
 exports.createMission = async (req, res) => {
     try{
-      let plante = await Plante.findOne({where:{id : req.body.planteId}});
-      if(!plante) {
-        return res.status(404).json("Plante non trouvée");
+      let post = await Post.findOne({where:{id : req.body.postId}});
+      if(!post) {
+        return res.status(404).json("Post non trouvée");
       }
       
-      let profile = await Profile.findOne({where:{id : plante.ProfileId}});
+      let profile = await Profile.findOne({where:{id : post.ProfileId}});
       if(profile.userUid !== res.locals.userId && !res.locals.isAdmin) {
-        return res.status(403).json("Vous n'êtes pas autorisé à accéder à cette plante");
+        return res.status(403).json("Vous n'êtes pas autorisé à accéder à cette post");
       }
 
       let missionCreated = {
-        PlanteId: req.body.planteId,
+        PostId: req.body.postId,
         description: req.body.description,
         dateDebut: req.body.dateDebut,
         dateFin: req.body.dateFin,
         accomplie: false
       };
       let mission = await Mission.create(missionCreated);
-      await Plante.update({MissionId : mission.id},{where: {id: req.body.planteId}});
+      await Post.update({MissionId : mission.id},{where: {id: req.body.postId}});
       res.status(201).json(mission);
     } catch(err){
       res.status(500).json({ error : err });
@@ -33,6 +33,10 @@ exports.createMission = async (req, res) => {
 exports.getAllMissions = async (req, res) => {
   try {
 
+    if(req.param("view") == null){
+      res.status(404).json({ message : 'Le paramètre view est obligatoire'}); 
+    }
+    
     if(req.param("view") == "admin"){
       if(!res.locals.isAdmin){
         res.status(403).json({ message: 'Vous ne pouvez pas accéder à la vue admin mission' });
@@ -50,12 +54,12 @@ exports.getAllMissions = async (req, res) => {
     }
     else if(req.param("view") == "owner"){
       let profile = await Profile.findOne({where: {userUid: res.locals.userId}});
-      let plantes = await Plante.findAll({where: {ProfileId: profile.id}});
+      let posts = await Post.findAll({where: {ProfileId: profile.id}});
       let missions = [];
       
-      await Promise.all(plantes.map(async (plante) => {
-        let planteMissions = await Mission.findAll({ where: { PlanteId: plante.id }, include: ['Profile'] });
-        missions.push(...planteMissions);
+      await Promise.all(posts.map(async (post) => {
+        let postMissions = await Mission.findAll({ where: { PostId: post.id }, include: ['Profile'] });
+        missions.push(...postMissions);
       }));
       res.status(200).json(missions);
 
@@ -76,10 +80,10 @@ exports.getMissionById = async (req, res) => {
       return res.status(404).json({ message: 'Mission non trouvée' });
     }
 
-    let plante = await Plante.findByPk(mission.PlanteId);
+    let post = await Post.findByPk(mission.PostId);
     let profileMission = await Profile.findByPk(mission.ProfileId);
-    let profilePlante = await Profile.findByPk(plante.ProfileId);
-    if(profilePlante.userUid !== res.locals.userId && !res.locals.isAdmin && profileMission.userUid !== res.locals.userId){
+    let profilePost = await Profile.findByPk(post.ProfileId);
+    if(profilePost.userUid !== res.locals.userId && !res.locals.isAdmin && profileMission.userUid !== res.locals.userId){
       res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
     }
     res.json(mission);
@@ -93,10 +97,10 @@ exports.editMission = async (req, res) => {
   const { id } = req.params;
   try {
 
-    let plante = await Plante.findOne({where:{id : req.body.planteId}});
+    let post = await Post.findOne({where:{id : req.body.postId}});
     
-    if(!plante) {
-      return res.status(404).json("Plante non trouvée");
+    if(!post) {
+      return res.status(404).json("Post non trouvée");
     }
 
     const mission = await Mission.findByPk(id);
@@ -106,18 +110,18 @@ exports.editMission = async (req, res) => {
     }
     let missionUpdated = {
       ProfileId: req.body.profileId,
-      PlanteId: req.body.planteId,
+      PostId: req.body.postId,
       description: req.body.description,
       dateDebut: req.body.dateDebut,
       dateFin: req.body.dateFin,
       accomplie: req.body.accomplie
     };
-    if(missionUpdated.ProfileId == plante.ProfileId){
-      res.status(403).json({ message: 'Mission et Plante le peuvent pas avoir le même ProfileId' });
+    if(missionUpdated.ProfileId == post.ProfileId){
+      res.status(403).json({ message: 'Mission et Post le peuvent pas avoir le même ProfileId' });
     }
     await mission.update({...missionUpdated },{where:{id : id}});
-    if(missionUpdated.PlanteId !== mission.PlanteId){
-      await Plante.update({MissionId : mission.id},{where: {id: req.body.planteId}});
+    if(missionUpdated.PostId !== mission.PostId){
+      await Post.update({MissionId : mission.id},{where: {id: req.body.postId}});
     }
 
 
@@ -136,8 +140,8 @@ exports.deleteMission = async (req, res) => {
     if (!mission) {
       return res.status(404).json({ message: 'Mission non trouvée' });
     }
-    let plante = await Plante.findByPk(mission.PlanteId);
-    let profile = await Profile.findByPk(plante.ProfileId);
+    let post = await Post.findByPk(mission.PostId);
+    let profile = await Profile.findByPk(post.ProfileId);
     if(profile.userUid !== res.locals.userId && !res.locals.isAdmin){
       res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
     }
@@ -160,8 +164,8 @@ exports.uploadPhoto = async (req, res) => {
       return res.status(400).json({ message: 'Fichier manquant' });
     }
 
-    let plante = await Plante.findByPk(mission.PlanteId);
-    let profile = await Profile.findByPk(plante.ProfileId);
+    let post = await Post.findByPk(mission.PostId);
+    let profile = await Profile.findByPk(post.ProfileId);
     if(profile.userUid !== res.locals.userId && !res.locals.isAdmin){
       res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
     }
@@ -187,8 +191,8 @@ exports.deletePhoto = async (req, res) => {
     if (!mission) {
       return res.status(404).json({ message: 'Mission non trouvée' });
     }
-    let plante = await Plante.findByPk(mission.PlanteId);
-    let profile = await Profile.findByPk(plante.ProfileId);
+    let post = await Post.findByPk(mission.PostId);
+    let profile = await Profile.findByPk(post.ProfileId);
     if(profile.userUid !== res.locals.userId && !res.locals.isAdmin){
       res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
     }

@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      models.Commentaire.belongsTo(models.Plante,{
+      models.Commentaire.belongsTo(models.Post,{
         onDelete: 'CASCADE' 
       });
       models.Commentaire.belongsTo(models.Profile),{
@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.INTEGER
     },
-    PlanteId:{
+    PostId:{
       allowNull: false,
       type: DataTypes.INTEGER
     },
