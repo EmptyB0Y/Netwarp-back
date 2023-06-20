@@ -32,7 +32,6 @@ exports.login = (req,res) =>{
         }
         console.log(user.uid)
         res.status(200).json({
-          userId: user.uid,
           token: jwt.sign(
             { userId: user.uid },
             process.env.JSON_TOKEN,
@@ -178,7 +177,8 @@ exports.getOneUser = (req, res) => {
 
   User.findOne({where:{ id: req.params.id }})
   .then(user => {
-    if(res.locals.isAdmin || String(user.uid) === res.locals.userId){
+    console.log(user.id + " " + res.locals.userId);
+    if(res.locals.isAdmin || user.id === res.locals.userId){
       return res.status(200).json(user)
     }
     else{

@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       models.Profile.hasOne(models.Mission,{
         onDelete: 'CASCADE' 
       })
-      models.Profile.hasMany(models.Commentaire,{
+      models.Profile.hasMany(models.Comment,{
         onDelete: 'CASCADE' 
       });
       models.Profile.hasMany(models.Post,{
@@ -31,9 +31,6 @@ module.exports = (sequelize, DataTypes) => {
     MissionId:{
       type: DataTypes.INTEGER,
     },
-    userUid:{
-      type: DataTypes.UUID,
-    },
     username: { 
       type: DataTypes.STRING,
       allowNull: false
@@ -41,9 +38,8 @@ module.exports = (sequelize, DataTypes) => {
     pictureUrl: {
       type: DataTypes.STRING
     },
-    isBotaniste: {
-      defaultValue: false,
-      type: DataTypes.BOOLEAN
+    relevance: {
+      type: DataTypes.INTEGER
     }
   }, {
     sequelize,

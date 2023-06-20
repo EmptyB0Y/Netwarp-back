@@ -16,6 +16,9 @@ module.exports = (sequelize, DataTypes) => {
       models.Photo.belongsTo(models.Mission),{
         onDelete: 'CASCADE' 
       };
+      models.Photo.belongsTo(models.Comment),{
+        onDelete: 'CASCADE' 
+      };
     }
   }
   Photo.init({
@@ -23,8 +26,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER
     },
     MissionId: {
-        type: DataTypes.INTEGER
-      },
+      type: DataTypes.INTEGER
+    },
+    CommentId: {
+      type: DataTypes.INTEGER
+    },
     url:{
       allowNull: false,
       type: DataTypes.STRING

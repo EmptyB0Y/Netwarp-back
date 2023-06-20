@@ -11,7 +11,7 @@ const usersRouter = require('./routes/users');
 const profileRouter = require('./routes/profiles');
 const postRouter = require('./routes/posts');
 const missionRouter = require('./routes/missions');
-const commentaireRouter = require('./routes/commentaires');
+const commentaireRouter = require('./routes/comment');
 
 var app = express();
 

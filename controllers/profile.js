@@ -9,17 +9,16 @@ exports.postProfile = (req, res) => {
   }
 
   let profileCreated = {
-    userUid : res.locals.userId,
+    UserId : res.locals.userId,
     username : req.body.username,
-    pictureUrl: null,
-    isBotaniste: false
+    pictureUrl: null
   };
   
   if(req.file){
     profileCreated.pictureUrl = `${req.protocol}://${req.get('host')}/pictures/${req.file.filename}`;
   }
 
-  User.findOne({where:{uid: res.locals.userId, ProfileId: null}
+  User.findOne({where:{id: res.locals.userId, ProfileId: null}
   }).then(user => {
     console.log(user);
 
@@ -31,7 +30,7 @@ exports.postProfile = (req, res) => {
         userModified = {...user};
         user.setProfile(profile);
                 
-        User.update({...user,ProfileId : profile.id},{where:{uid : res.locals.userId}})
+        User.update({...user,ProfileId : profile.id},{where:{id : res.locals.userId}})
           .then(() => {
               res.status(201).json(profileCreated);
           });

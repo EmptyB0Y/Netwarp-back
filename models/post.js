@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       models.Post.belongsTo(models.Mission,{
         onDelete: 'CASCADE' 
       });
-      models.Post.hasMany(models.Commentaire,{
+      models.Post.hasMany(models.Comment,{
         onDelete: 'CASCADE'
       });
       models.Post.hasMany(models.Photo,{
