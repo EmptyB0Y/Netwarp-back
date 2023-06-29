@@ -91,7 +91,7 @@ exports.editProfile = (req, res) => {
 
 exports.deleteProfile = (req, res) => {
   Profile.findOne({where: {id : req.params.id}}).then((profile) => {
-    if(profile.userUid == res.locals.userId || res.locals.isAdmin){
+    if(profile.UserId == res.locals.userId || res.locals.isAdmin){
       Profile.destroy({where: {id : req.params.id}})
       .then(() => {
         User.update({ProfileId : null},{where:{uid : res.locals.userId}}).then(() => {

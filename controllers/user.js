@@ -120,7 +120,7 @@ exports.editUserPassword = (req, res) =>{
 
   User.findOne({where:{id : req.params.id}})
   .then((user) =>{
-    if(!res.locals.isAdmin && String(user.uid) !== res.locals.userId){
+    if(!res.locals.isAdmin && user.id !== res.locals.userId){
       return res.status(403).json({message: "Forbidden !"});
     }
       bcrypt.compare(req.body.oldPassword, user.password)
@@ -151,10 +151,10 @@ exports.deleteUser = async (req, res) =>{
 
   await User.findOne({where:{id : String(req.params.id)}})
   .then((user) =>{
-    if(!res.locals.isAdmin && String(user.uid) !== res.locals.userId){
+    if(!res.locals.isAdmin && user.id !== res.locals.userId){
       return res.status(403).json({message: "Forbidden !"});
     }
-    if(String(user.uid) === res.locals.userId){
+    if(user.id === res.locals.userId){
         bcrypt.compare(req.body.password, user.password)
         .then(valid => {
           if (!valid) {

@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     MissionId:{
       type: DataTypes.INTEGER
     },
-    nom: {
+    content: {
       type: DataTypes.STRING
     },
     topic: {

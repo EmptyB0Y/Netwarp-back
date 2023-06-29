@@ -4,7 +4,7 @@ exports.createComment = async (req, res) => {
   try {
     const { content, postId } = req.body;
 
-    let profile = await Profile.findOne({where:{userUid: res.locals.userId}});
+    let profile = await Profile.findOne({where:{UserId: res.locals.userId}});
     let post = await Post.findByPk(postId);
     let profilePost = await Profile.findByPk(post.ProfileId);
     let mission = await Mission.findByPk(post.MissionId);
@@ -15,11 +15,11 @@ exports.createComment = async (req, res) => {
     }
 
     if(profileMission != null){
-      if(profileMission.userUid != res.locals.userId) {
+      if(profileMission.UserId != res.locals.userId) {
         return res.status(403).json({ message: "Vous n'êtes pas autorisé à poster ce comment" });
       }
     }else if(profilePost!= null){
-      if(profilePost.userUid != res.locals.userId) {
+      if(profilePost.UserId != res.locals.userId) {
         return res.status(403).json({ message: "Vous n'êtes pas autorisé à poster ce comment" });
       }
     }
@@ -52,7 +52,7 @@ exports.getCommentById = async (req, res) => {
     let profilePost = await Profile.findByPk(post.ProfileId);
     let profile = await Profile.findByPk(comment.ProfileId);
 
-    if(profilePost.userUid != res.locals.userId && profile.userUid != res.locals.userId && !res.locals.isAdmin) {
+    if(profilePost.UserId != res.locals.userId && profile.UserId != res.locals.userId && !res.locals.isAdmin) {
       return res.status(403).json({ message: "Vous ne pouvez pas acceder à ce comment" });
     }
     if (!comment) {

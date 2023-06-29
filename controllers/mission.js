@@ -10,7 +10,7 @@ exports.createMission = async (req, res) => {
       }
       
       let profile = await Profile.findOne({where:{id : post.ProfileId}});
-      if(profile.userUid !== res.locals.userId && !res.locals.isAdmin) {
+      if(profile.UserId !== res.locals.userId && !res.locals.isAdmin) {
         return res.status(403).json("Vous n'êtes pas autorisé à accéder à cette post");
       }
 
@@ -48,12 +48,12 @@ exports.getAllMissions = async (req, res) => {
       }
     }
     else if(req.param("view") == "caretaker") {
-      let profile = await Profile.findOne({where: {userUid: res.locals.userId}});
+      let profile = await Profile.findOne({where: {UserId: res.locals.userId}});
       let missions = await Mission.findAll({where: {ProfileId: profile.id}});
       res.status(200).json(missions);
     }
     else if(req.param("view") == "owner"){
-      let profile = await Profile.findOne({where: {userUid: res.locals.userId}});
+      let profile = await Profile.findOne({where: {UserId: res.locals.userId}});
       let posts = await Post.findAll({where: {ProfileId: profile.id}});
       let missions = [];
       
@@ -83,7 +83,7 @@ exports.getMissionById = async (req, res) => {
     let post = await Post.findByPk(mission.PostId);
     let profileMission = await Profile.findByPk(mission.ProfileId);
     let profilePost = await Profile.findByPk(post.ProfileId);
-    if(profilePost.userUid !== res.locals.userId && !res.locals.isAdmin && profileMission.userUid !== res.locals.userId){
+    if(profilePost.UserId !== res.locals.userId && !res.locals.isAdmin && profileMission.UserId !== res.locals.userId){
       res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
     }
     res.json(mission);
@@ -142,7 +142,7 @@ exports.deleteMission = async (req, res) => {
     }
     let post = await Post.findByPk(mission.PostId);
     let profile = await Profile.findByPk(post.ProfileId);
-    if(profile.userUid !== res.locals.userId && !res.locals.isAdmin){
+    if(profile.UserId !== res.locals.userId && !res.locals.isAdmin){
       res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
     }
     await mission.destroy();
@@ -166,7 +166,7 @@ exports.uploadPhoto = async (req, res) => {
 
     let post = await Post.findByPk(mission.PostId);
     let profile = await Profile.findByPk(post.ProfileId);
-    if(profile.userUid !== res.locals.userId && !res.locals.isAdmin){
+    if(profile.UserId !== res.locals.userId && !res.locals.isAdmin){
       res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
     }
 
@@ -193,7 +193,7 @@ exports.deletePhoto = async (req, res) => {
     }
     let post = await Post.findByPk(mission.PostId);
     let profile = await Profile.findByPk(post.ProfileId);
-    if(profile.userUid !== res.locals.userId && !res.locals.isAdmin){
+    if(profile.UserId !== res.locals.userId && !res.locals.isAdmin){
       res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
     }
     fs.unlink('./images/' + photo.url.split('/images/')[1], (err) => {

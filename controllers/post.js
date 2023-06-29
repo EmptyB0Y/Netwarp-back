@@ -17,13 +17,13 @@ exports.createPost = (req, res) => {
   };
 
   // Save post in the database
-  Profile.findOne({where: {userUid: res.locals.userId}}).then(profile => {
+  Profile.findOne({where: {UserId: res.locals.userId}}).then(profile => {
     if(!profile) {
       res.status(500).json({message : "Pas de profil trouvé"});
     }
     Post.create({...post,ProfileId: profile.id})
       .then(postCreated => {
-        //Profile.update({...profile,PostId:postCreated.id}, {where: {userUid: res.locals.userId}}).then(() => {
+        //Profile.update({...profile,PostId:postCreated.id}, {where: {UserId: res.locals.userId}}).then(() => {
           res.send(postCreated);
         //});
       });
@@ -138,7 +138,7 @@ exports.uploadPhoto = async (req, res) => {
     }
 
     let profile = await Profile.findByPk(post.ProfileId);
-    if(profile.userUid !== res.locals.userId && !res.locals.isAdmin){
+    if(profile.UserId !== res.locals.userId && !res.locals.isAdmin){
       res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
     }
 
@@ -165,7 +165,7 @@ exports.deletePhoto = async (req, res) => {
     }
 
     let profile = await Profile.findByPk(post.ProfileId);
-    if(profile.userUid !== res.locals.userId && !res.locals.isAdmin){
+    if(profile.UserId !== res.locals.userId && !res.locals.isAdmin){
       res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
     }
     fs.unlink('./images/' + photo.url.split('/images/')[1], (err) => {

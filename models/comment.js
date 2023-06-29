@@ -10,6 +10,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      models.Comment.belongsTo(models.Comment, {
+        onDelete: 'CASCADE'
+      });
+      models.Comment.hasMany(models.Comment, {
+        onDelete: 'CASCADE'
+      });
       models.Comment.belongsTo(models.Post,{
         onDelete: 'CASCADE' 
       });
@@ -28,6 +34,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     PostId:{
       allowNull: false,
+      type: DataTypes.INTEGER
+    },
+    CommentId:{
       type: DataTypes.INTEGER
     },
     content:{
