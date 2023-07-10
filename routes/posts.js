@@ -5,6 +5,7 @@ const postCtrl = require('../controllers/post');
 const auth = require('../middlewares/auth');
 const upload = require('../middlewares/upload');
 
+router.get('/:topic', postCtrl.findAllByTopic);
 router.get('/:id', auth, postCtrl.findAll);
 router.get('/:id', auth, postCtrl.findOne);
 router.post('/', auth, upload, postCtrl.createPost);

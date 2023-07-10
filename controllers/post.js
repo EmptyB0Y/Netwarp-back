@@ -4,16 +4,21 @@ const fs = require('fs');
 // Create a new post
 exports.createPost = (req, res) => {
   // Validate request
-  if (!req.body.nom) {
+  if (!req.body.content) {
     res.status(400).send({
-      message: "Le nom ne peut pas être vide."
+      message: "Le contenu ne peut pas être vide."
     });
     return;
   }
 
+  topic = 'general'
+  if(req.body.topic) {
+    topic = req.body.topic
+  }
   // Create a post object
   const post = {
-    nom: req.body.nom,
+    content: req.body.content,
+    topic: topic
   };
 
   // Save post in the database
@@ -39,6 +44,19 @@ exports.createPost = (req, res) => {
 // Retrieve all posts from the database
 exports.findAll = (req, res) => {
   Post.findAll({where:{ProfileId : req.params.id}, include: ['Mission', 'Profile'] })
+    .then(posts => {
+      res.status(200).send(posts);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Une erreur est survenue lors de la récupération des posts."
+      });
+    });
+};
+
+exports.findAllByTopic = (req, res) => {
+  Post.findAll({where:{topic : req.params.topic}, include: ['Mission', 'Profile'] })
     .then(posts => {
       res.status(200).send(posts);
     })
