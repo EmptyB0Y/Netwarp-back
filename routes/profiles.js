@@ -6,8 +6,8 @@ const auth = require('../middlewares/auth');
 const upload = require('../middlewares/upload');
 
 router.post('/', auth, upload, profileCtrl.postProfile);
-router.get('/', auth, profileCtrl.getAllProfiles);
-router.get('/:id', auth, profileCtrl.getProfile);
+router.get('/', profileCtrl.getAllProfiles);
+router.get('/:id', profileCtrl.getProfile);
 router.put('/:id', auth, upload, profileCtrl.editProfile);
 router.delete('/:id', auth, profileCtrl.deleteProfile);
 

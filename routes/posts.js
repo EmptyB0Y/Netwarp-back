@@ -1,10 +1,12 @@
 var express = require('express');
 var router = express.Router();
 
+const commentCtrl = require('../controllers/comment');
 const postCtrl = require('../controllers/post');
 const auth = require('../middlewares/auth');
 const upload = require('../middlewares/upload');
 
+router.get('/:id/comments', commentCtrl.getCommentsByPost)
 router.get('/:topic', postCtrl.findAllByTopic);
 router.get('/:id', auth, postCtrl.findAll);
 router.get('/:id', auth, postCtrl.findOne);

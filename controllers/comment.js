@@ -2,46 +2,68 @@ const { Comment, Profile, Post, Mission } = require('../models');
 
 exports.createComment = async (req, res) => {
   try {
-    const { content, postId } = req.body;
+    const { content, postId, commentId } = req.body;
 
     let profile = await Profile.findOne({where:{UserId: res.locals.userId}});
     let post = await Post.findByPk(postId);
-    let profilePost = await Profile.findByPk(post.ProfileId);
-    let mission = await Mission.findByPk(post.MissionId);
-    let profileMission = await Profile.findByPk(mission.ProfileId);
+    let com = await Comment.findByPk(commentId);
 
-    if(profile == null || (profilePost == null && profileMission == null)) {
-      return res.status(403).json({ message: "Vous n'êtes pas autorisé à poster ce comment" });
+    let profilePost = null;
+    let profileComment = null;
+
+    if(post){
+      profilePost = await Profile.findByPk(post.ProfileId);
     }
-
-    if(profileMission != null){
-      if(profileMission.UserId != res.locals.userId) {
-        return res.status(403).json({ message: "Vous n'êtes pas autorisé à poster ce comment" });
-      }
-    }else if(profilePost!= null){
-      if(profilePost.UserId != res.locals.userId) {
-        return res.status(403).json({ message: "Vous n'êtes pas autorisé à poster ce comment" });
-      }
+    else if(com){
+      profileComment = await Comment.findByPk(com.ProfileId);
     }
+    else{
+      return res.status(404).json({ message : "Post ou commentaire non trouvé"});
 
-    console.log({
-      ProfileId: profile.id,
-      PostId: postId,
-      content: content
-    });
+    }
     
     // Create the new comment
     const comment = await Comment.create({
       ProfileId: profile.id,
       PostId: postId,
+      CommentId: commentId,
       content: content
     });
+
+    if(commentId){
+      comment.PostId = null;
+    }
 
     res.status(201).json(comment);
   } catch (err) {
     res.status(500).json({ error: err.message});
   }
 };
+
+exports.getCommentsByPost = async (req, res) => {
+  try{
+    const { id } = req.params;
+    const comments = await Comment.findAll({where: {PostId: id, CommentId: null}});
+
+    res.json(comments);
+  }catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+exports.getCommentsByComment = async (req, res) => {
+  try{
+    const { id } = req.params;
+
+    const comments = await Comment.findAll({where: {CommentId: id}});
+    
+    res.json(comments);
+  }catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
 
 exports.getCommentById = async (req, res) => {
   try {

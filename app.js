@@ -40,8 +40,10 @@ app.use('/', usersRouter);
 app.use('/profiles', profileRouter);
 app.use('/posts', postRouter);
 app.use('/missions', missionRouter);
-app.use('/commentaires', commentaireRouter);
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/comments', commentaireRouter);
+app.use('/images/default', express.static(path.join(__dirname, 'images/default')));
+app.use('/images/posts', express.static(path.join(__dirname, 'images/posts')));
+app.use('/images/comments', express.static(path.join(__dirname, 'images/comments')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
