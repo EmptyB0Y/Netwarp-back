@@ -42,6 +42,10 @@ module.exports = (sequelize, DataTypes) => {
     content:{
       allowNull: false,
       type: DataTypes.STRING
+    },
+    upvotes:{
+      type: DataTypes.INTEGER,
+      defaultValue: 0
     }
   }, {
     sequelize,
