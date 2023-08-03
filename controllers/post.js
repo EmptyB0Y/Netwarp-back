@@ -42,7 +42,7 @@ exports.createPost = (req, res) => {
 };
 
 // Retrieve all posts from the database
-exports.findAll = (req, res) => {
+exports.findAllPostsByProfile = (req, res) => {
   Post.findAll({where:{ProfileId : req.params.id}, include: ['Mission', 'Profile'] })
     .then(posts => {
       res.status(200).send(posts);
@@ -55,7 +55,7 @@ exports.findAll = (req, res) => {
     });
 };
 
-exports.findAllByTopic = (req, res) => {
+exports.findAllPostsByTopic = (req, res) => {
   Post.findAll({where:{topic : req.params.topic}, include: ['Mission', 'Profile'] })
     .then(posts => {
       res.status(200).send(posts);
@@ -69,23 +69,14 @@ exports.findAllByTopic = (req, res) => {
 };
 
 // Find a single post with an id
-exports.findOne = (req, res) => {
-  const id = req.params.id;
-
-  Post.findByPk(id, { include: ['Mission', 'Profile', 'Commentaire'] })
-    .then(data => {
-      if (!data) {
-        res.status(404).send({
-          message: "La post avec l'ID " + id + " n'a pas été trouvée."
-        });
-      } else {
-        res.send(data);
-      }
+exports.findPost = (req, res) => {
+  Post.findOne({where : { id: req.params.id} })
+    .then(post => {
+      console.log(post);
+      res.status(200).json(post);
     })
     .catch(err => {
-      res.status(500).send({
-        message: "Erreur lors de la récupération de la post avec l'ID " + id
-      });
+      res.status(500).json(err);
     });
 };
 

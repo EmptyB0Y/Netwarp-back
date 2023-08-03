@@ -115,6 +115,38 @@ exports.updateComment = async (req, res) => {
   }
 };
 
+exports.upvoteComment = async (req, res) => {
+  try{
+    const { id } = req.params;
+
+    const comment = await Comment.findByPk(id);
+    let profile = await Profile.findByPk(comment.ProfileId);
+    let profileLike = await Profile.findOne({where:{userId: res.locals.userId}});
+    let upvotes = JSON.parse(comment.upvotes);
+
+    if(profileLike.id === profile.id){
+      res.status(400).json({message: "Vous ne pouvez pas liker votre propre commentaire"});
+    }
+    if(!upvotes.includes(profileLike.id)) {
+      upvotes.push(profileLike.id);
+    }
+    else{
+      const index = upvotes.indexOf(profileLike.id);
+      if (index > -1) {
+        upvotes.splice(index, 1);
+      }    
+    }
+
+    comment.upvotes = JSON.stringify(upvotes);
+    await comment.save();
+
+    res.json(comment);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 exports.deleteComment = async (req, res) => {
   try {
     const { id } = req.params;

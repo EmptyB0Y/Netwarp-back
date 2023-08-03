@@ -44,8 +44,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING
     },
     upvotes:{
-      type: DataTypes.INTEGER,
-      defaultValue: 0
+      type: DataTypes.STRING,
+      defaultValue: "[]"
     }
   }, {
     sequelize,

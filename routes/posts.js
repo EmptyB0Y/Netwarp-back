@@ -7,9 +7,9 @@ const auth = require('../middlewares/auth');
 const upload = require('../middlewares/upload');
 
 router.get('/:id/comments', commentCtrl.getCommentsByPost)
-router.get('/:topic', postCtrl.findAllByTopic);
-router.get('/:id', auth, postCtrl.findAll);
-router.get('/:id', auth, postCtrl.findOne);
+router.get('/:id', auth, postCtrl.findPost);
+router.get('/topic/:topic', postCtrl.findAllPostsByTopic);
+router.get('/profile/:id', auth, postCtrl.findAllPostsByProfile);
 router.post('/', auth, upload, postCtrl.createPost);
 router.put('/:id', auth, upload, postCtrl.editPost);
 router.post('/:id/upload-photo', auth, upload, postCtrl.uploadPhoto);
