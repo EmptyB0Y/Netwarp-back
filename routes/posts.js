@@ -7,11 +7,12 @@ const auth = require('../middlewares/auth');
 const upload = require('../middlewares/upload');
 
 router.get('/:id/comments', commentCtrl.getCommentsByPost)
-router.get('/:id', auth, postCtrl.findPost);
+router.get('/:id', postCtrl.findPost);
 router.get('/topic/:topic', postCtrl.findAllPostsByTopic);
-router.get('/profile/:id', auth, postCtrl.findAllPostsByProfile);
-router.post('/', auth, upload, postCtrl.createPost);
-router.put('/:id', auth, upload, postCtrl.editPost);
+router.get('/profile/:id', postCtrl.findAllPostsByProfile);
+router.post('/', auth, postCtrl.createPost);
+router.put('/:id', auth, postCtrl.editPost);
+router.delete('/:id', auth, postCtrl.deletePost);
 router.post('/:id/upload-photo', auth, upload, postCtrl.uploadPhoto);
 router.delete('/delete-photo/:id', auth, postCtrl.deletePhoto);
 

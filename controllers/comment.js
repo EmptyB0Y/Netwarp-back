@@ -27,12 +27,9 @@ exports.createComment = async (req, res) => {
       ProfileId: profile.id,
       PostId: postId,
       CommentId: commentId,
-      content: content
+      content: content,
+      upvotes: "[]"
     });
-
-    if(commentId){
-      comment.PostId = null;
-    }
 
     res.status(201).json(comment);
   } catch (err) {
@@ -48,7 +45,7 @@ exports.getCommentsByPost = async (req, res) => {
     res.json(comments);
   }catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({error: error});
   }
 }
 
@@ -153,7 +150,7 @@ exports.deleteComment = async (req, res) => {
     let comment = await Comment.findByPk(id);
     let profile = await Profile.findByPk(comment.ProfileId);
 
-    if(profile.userId != res.locals.userId && !res.locals.isAdmin) {
+    if(profile.UserId != res.locals.userId && !res.locals.isAdmin) {
       return res.status(403).json({ message: "Vous ne pouvez pas acceder à ce comment" });
     }
     const deletedComment = await Comment.destroy({ where: { id } });

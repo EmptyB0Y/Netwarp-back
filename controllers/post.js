@@ -5,7 +5,7 @@ const fs = require('fs');
 exports.createPost = (req, res) => {
   // Validate request
   if (!req.body.content) {
-    res.status(400).send({
+    res.status(400).json({
       message: "Le contenu ne peut pas être vide."
     });
     return;
@@ -29,12 +29,12 @@ exports.createPost = (req, res) => {
     Post.create({...post,ProfileId: profile.id})
       .then(postCreated => {
         //Profile.update({...profile,PostId:postCreated.id}, {where: {UserId: res.locals.userId}}).then(() => {
-          res.send(postCreated);
+          res.json(postCreated);
         //});
       });
     })
     .catch(err => {
-      res.status(500).send({
+      res.status(500).json({
         message:
           err.message || "Une erreur est survenue lors de la création de la post."
       });
@@ -45,10 +45,10 @@ exports.createPost = (req, res) => {
 exports.findAllPostsByProfile = (req, res) => {
   Post.findAll({where:{ProfileId : req.params.id}, include: ['Mission', 'Profile'] })
     .then(posts => {
-      res.status(200).send(posts);
+      res.status(200).json(posts);
     })
     .catch(err => {
-      res.status(500).send({
+      res.status(500).json({
         message:
           err.message || "Une erreur est survenue lors de la récupération des posts."
       });
@@ -58,10 +58,10 @@ exports.findAllPostsByProfile = (req, res) => {
 exports.findAllPostsByTopic = (req, res) => {
   Post.findAll({where:{topic : req.params.topic}, include: ['Mission', 'Profile'] })
     .then(posts => {
-      res.status(200).send(posts);
+      res.status(200).json(posts);
     })
     .catch(err => {
-      res.status(500).send({
+      res.status(500).json({
         message:
           err.message || "Une erreur est survenue lors de la récupération des posts."
       });
@@ -95,24 +95,24 @@ exports.editPost = (req, res) => {
   })
     .then(num => {
       if (num == 1) {
-        res.send({
+        res.status(200).json({
           message: "La post a été mise à jour avec succès."
         });
       } else {
-        res.send({
+        res.status(400).json({
           message: "Impossible de mettre à jour la post avec l'ID " + req.params.id + ". Peut-être que la post n'a pas été trouvée ou que les données à mettre à jour sont vides."
         });
       }
     })
     .catch(err => {
-      res.status(500).send({
+      res.status(500).json({
         message: "Erreur lors de la mise à jour de la post avec l'ID " + req.params.id
       });
     });
 };
 
 // Delete a post by its id
-exports.delete = (req, res) => {
+exports.deletePost = (req, res) => {
   const id = req.params.id;
 
   Post.destroy({
@@ -120,11 +120,11 @@ exports.delete = (req, res) => {
   })
     .then(num => {
       if (num == 1) {
-        res.send({
+        res.json({
           message: "La post a été supprimée avec succès."
         });
       } else {
-        res.send({
+        res.json({
           message: "Impossible de supprimer la post avec l'ID " + id + ". Peut-être que la post n'a pas été trouvée."
         });
       }
