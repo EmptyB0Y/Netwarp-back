@@ -5,6 +5,7 @@ const profileCtrl = require('../controllers/profile');
 const auth = require('../middlewares/auth');
 const upload = require('../middlewares/upload');
 
+router.post('/search', profileCtrl.textSearchProfile);
 router.post('/', auth, upload, profileCtrl.postProfile);
 router.get('/', profileCtrl.getAllProfiles);
 router.get('/:id', profileCtrl.getProfile);
