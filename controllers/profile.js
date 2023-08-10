@@ -11,8 +11,7 @@ exports.postProfile = (req, res) => {
 
   let profileCreated = {
     UserId : res.locals.userId,
-    username : req.body.username,
-    pictureUrl: null
+    username : req.body.username
   };
   
   if(req.file){
