@@ -1,4 +1,4 @@
-const { Comment, Profile, Post, Mission } = require('../models');
+const { Comment, Profile, Post, Notification } = require('../models');
 
 exports.createComment = async (req, res) => {
   try {
@@ -8,14 +8,15 @@ exports.createComment = async (req, res) => {
     let post = await Post.findByPk(postId);
     let com = await Comment.findByPk(commentId);
 
-    let profilePost = null;
-    let profileComment = null;
+    let profileCommented = null;
+    let name = "comment";
 
-    if(post){
-      profilePost = await Profile.findByPk(post.ProfileId);
+    if(com){
+      profileCommented = await Comment.findByPk(com.ProfileId);
     }
-    else if(com){
-      profileComment = await Comment.findByPk(com.ProfileId);
+    else if(post){
+      profileCommented = await Profile.findByPk(post.ProfileId);
+      name = "post"
     }
     else{
       return res.status(404).json({ message : "Post ou commentaire non trouvé"});
@@ -31,6 +32,11 @@ exports.createComment = async (req, res) => {
       upvotes: "[]"
     });
 
+    await Notification.create({
+      ProfileId: profileCommented.id,
+      content: profile.username + " has commented on your "+ name +".",
+      target: "comment " + comment.id
+    });
     res.status(201).json(comment);
   } catch (err) {
     res.status(500).json({ error: err.message});
@@ -45,7 +51,7 @@ exports.getCommentsByPost = async (req, res) => {
     res.json(comments);
   }catch (error) {
     console.error(error);
-    res.status(500).json({error: error});
+    res.status(500).json({message: 'Server error', error: error});
   }
 }
 
@@ -58,7 +64,7 @@ exports.getCommentsByComment = async (req, res) => {
     res.json(comments);
   }catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error : error });
   }
 }
 
@@ -67,21 +73,15 @@ exports.getCommentById = async (req, res) => {
     const { id } = req.params;
 
     const comment = await Comment.findByPk(id);
-    let post = await Post.findByPk(comment.PostId);
-    let profilePost = await Profile.findByPk(post.ProfileId);
-    let profile = await Profile.findByPk(comment.ProfileId);
-
-    if(profilePost.UserId != res.locals.userId && profile.UserId != res.locals.userId && !res.locals.isAdmin) {
-      return res.status(403).json({ message: "Vous ne pouvez pas acceder à ce comment" });
-    }
+    
     if (!comment) {
-      return res.status(404).json({ message: 'Comment not found' });
+      return res.status(404).json({ message: 'Commentaire non trouvé' });
     }
 
     res.json(comment);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error });
   }
 };
 
@@ -95,10 +95,10 @@ exports.updateComment = async (req, res) => {
     let profile = await Profile.findByPk(comment.ProfileId);
 
     if(profile.userId != res.locals.userId && !res.locals.isAdmin) {
-      return res.status(403).json({ message: "Vous ne pouvez pas acceder à ce comment" });
+      return res.status(403).json({ message: "Vous ne pouvez pas acceder à ce commentaire" });
     }
     if (!comment) {
-      return res.status(404).json({ message: 'Comment non trouvé' });
+      return res.status(404).json({ message: 'Commentaire non trouvé' });
     }
 
     // Update the comment
@@ -108,7 +108,7 @@ exports.updateComment = async (req, res) => {
     res.json(comment);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error });
   }
 };
 
@@ -120,12 +120,14 @@ exports.upvoteComment = async (req, res) => {
     let profile = await Profile.findByPk(comment.ProfileId);
     let profileLike = await Profile.findOne({where:{userId: res.locals.userId}});
     let upvotes = JSON.parse(comment.upvotes);
+    let like = false;
 
     if(profileLike.id === profile.id){
-      res.status(400).json({message: "Vous ne pouvez pas liker votre propre commentaire"});
+      res.status(400).json({message: "Vous ne pouvez pas upvoter votre propre commentaire"});
     }
     if(!upvotes.includes(profileLike.id)) {
       upvotes.push(profileLike.id);
+      like = true;
     }
     else{
       const index = upvotes.indexOf(profileLike.id);
@@ -136,6 +138,13 @@ exports.upvoteComment = async (req, res) => {
 
     comment.upvotes = JSON.stringify(upvotes);
     await comment.save();
+    if(like){
+      await Notification.create({
+        ProfileId: profile.id,
+        content: profileLike.username + " has upvoted your comment.",
+        target: "profile "+ profileLike.id
+      });
+    }
 
     res.json(comment);
   } catch (error) {
@@ -151,15 +160,15 @@ exports.deleteComment = async (req, res) => {
     let profile = await Profile.findByPk(comment.ProfileId);
 
     if(profile.UserId != res.locals.userId && !res.locals.isAdmin) {
-      return res.status(403).json({ message: "Vous ne pouvez pas acceder à ce comment" });
+      return res.status(403).json({ message: "Vous ne pouvez pas acceder à ce commentaire" });
     }
     const deletedComment = await Comment.destroy({ where: { id } });
 
     if (!deletedComment) {
-      return res.status(404).json({ message: 'Comment non trouvé' });
+      return res.status(404).json({ message: 'Commentaire non trouvé' });
     }
 
-    res.json({ message: 'Comment supprimé' });
+    res.json({ message: 'Commentaire supprimé' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });

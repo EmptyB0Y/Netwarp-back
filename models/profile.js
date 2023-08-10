@@ -22,6 +22,9 @@ module.exports = (sequelize, DataTypes) => {
       models.Profile.hasMany(models.Post,{
         onDelete: 'CASCADE' 
       });
+      models.Profile.hasMany(models.Notification,{
+        onDelete: 'CASCADE' 
+      });
     }
   }
   Profile.init({
