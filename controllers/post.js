@@ -86,38 +86,59 @@ exports.editPost = (req, res) => {
   let post = {
     nom: req.body.nom,
   };
+  Profile.findOne({where: {UserId: res.locals.userId}}).then(profile => {
+    if(!profile) {
+      res.status(500).json({message : "Pas de profil trouvé"});
+    }
+    
+    let where = { id: req.params.id, ProfileId: profile.id}
 
-  if (!req.file) {
-
-  }
-  Post.update({...post}, {
-    where: { id: req.params.id }
-  })
-    .then(num => {
-      if (num == 1) {
-        res.status(200).json({
-          message: "La post a été mise à jour avec succès."
+    if(res.locals.isAdmin){
+      where = { id: req.params.id }
+    }
+    
+    Post.update({...post}, {
+      where: where
+    })
+      .then(num => {
+        if (num == 1) {
+          res.status(200).json({
+            message: "La post a été mise à jour avec succès."
+          });
+        } else {
+          res.status(400).json({
+            message: "Impossible de mettre à jour la post avec l'ID " + req.params.id + ". Peut-être que la post n'a pas été trouvée ou que les données à mettre à jour sont vides."
+          });
+        }
+      })
+      .catch(err => {
+        res.status(500).json({
+          message: "Erreur lors de la mise à jour de la post avec l'ID " + req.params.id
         });
-      } else {
-        res.status(400).json({
-          message: "Impossible de mettre à jour la post avec l'ID " + req.params.id + ". Peut-être que la post n'a pas été trouvée ou que les données à mettre à jour sont vides."
-        });
-      }
+      });
     })
     .catch(err => {
-      res.status(500).json({
-        message: "Erreur lors de la mise à jour de la post avec l'ID " + req.params.id
-      });
+      res.status(500).json(err);
     });
 };
 
 // Delete a post by its id
 exports.deletePost = (req, res) => {
-  const id = req.params.id;
 
-  Post.destroy({
-    where: { id: id }
-  })
+  Profile.findOne({where: {UserId: res.locals.userId}}).then(profile => {
+    if(!profile) {
+      res.status(500).json({message : "Pas de profil trouvé"});
+    }
+    
+    let where = { id: req.params.id, ProfileId: profile.id}
+
+    if(res.locals.isAdmin){
+      where = { id: req.params.id }
+    }
+
+    Post.destroy({
+      where: where
+    })
     .then(num => {
       if (num == 1) {
         res.json({
@@ -132,6 +153,10 @@ exports.deletePost = (req, res) => {
     .catch(err => {
       res.status(500)
     })
+  })
+  .catch(err => {
+    res.status(500).json(err);
+  });
 };
 
 exports.uploadPhoto = async (req, res) => {

@@ -163,14 +163,14 @@ exports.deleteUser = async (req, res) =>{
         })
       .catch(error => res.status(500).json({ error }));
     }
-  })
-  .catch(() => res.status(404).json({message: 'User not found !'}));
 
     User.destroy({where:{id : req.params.id}})
     .then(() => {
       return res.status(204).json({});
     })
     .catch(() => res.status(404).json({message: 'User not found !'}));
+  })
+  .catch(() => res.status(404).json({message: 'User not found !'}));
 };
 
 exports.getOneUser = (req, res) => {

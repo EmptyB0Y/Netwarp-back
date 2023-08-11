@@ -5,11 +5,11 @@ module.exports = async (req, res, next) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, process.env.JSON_TOKEN);
-    const userId = decodedToken.userId;
+    const uuid = decodedToken.userId;
 
       res.locals.isAdmin = false;
-      console.log(userId);
-      await User.findOne({where:{ uid: userId }})
+      console.log(uuid + ' authenticated');
+      await User.findOne({where:{ uid: uuid }})
       .then(user => {  
         console.log(user);
         res.locals.userId = user.id;

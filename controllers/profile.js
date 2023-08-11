@@ -64,14 +64,19 @@ exports.getProfile = (req, res) => {
 exports.editProfile = (req, res) => {
   Profile.findOne({where: {id : req.params.id}}).then((profile) => {
 
+    if(!profile) {
+      res.status(500).json({message : "Pas de profil trouvé"});
+    }
+    
+    if(!res.locals.isAdmin && profile.UserId != res.locals.userId){
+      res.json({message : "Vous n'avez pas accès à ce profil"});
+    }
+
     let ProfileUpdated = {
     ...profile,
-    username: req.body.username
+    username: req.body.username,
+    description: req.body.description
     };
-    
-    if(res.locals.isAdmin && req.body.isBotaniste){
-      ProfileUpdated.isBotaniste = true
-    }
 
     if(req.file){
       ProfileUpdated.pictureUrl = `${req.protocol}://${req.get('host')}/pictures/${req.file.filename}`;
@@ -91,19 +96,21 @@ exports.editProfile = (req, res) => {
 
 exports.deleteProfile = (req, res) => {
   Profile.findOne({where: {id : req.params.id}}).then((profile) => {
-    if(profile.UserId == res.locals.userId || res.locals.isAdmin){
-      Profile.destroy({where: {id : req.params.id}})
-      .then(() => {
-        User.update({ProfileId : null},{where:{uid : res.locals.userId}}).then(() => {
-          res.status(204).json({})
-        });
 
-      })
-      .catch((e) => {
-        res.status(500).json({e})
+    if(!res.locals.isAdmin && profile.UserId != res.locals.userId){
+      res.json({message : "Vous n'avez pas accès à ce profil"});
+    }
+    
+    Profile.destroy({where: {id : req.params.id}})
+    .then(() => {
+      User.update({ProfileId : null},{where:{uid : res.locals.userId}}).then(() => {
+        res.status(204).json({})
       });
 
-    }
+    })
+    .catch((e) => {
+      res.status(500).json({e})
+    });
   })
   .catch((e) => {
     res.status(404).json(e)
