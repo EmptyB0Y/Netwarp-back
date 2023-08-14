@@ -214,3 +214,66 @@ exports.deletePhoto = async (req, res) => {
     res.status(500).json({ error : err });
   }
 };
+
+const sortTopics = async (tab) =>{
+  let topValue = 0;
+  sorting = {}
+  let sorted = [];
+  for(let i = 0; i< tab.length; i++){
+    if(sorting[tab[i].count] === undefined){
+      sorting[tab[i].count] = tab[i].topic;
+    }
+  }
+
+  for(let i of Object.keys(sorting)){
+    if(Number(i) > topValue){
+      topValue = i;
+    }
+  }
+
+  for(let i = topValue; i > 0; i--){
+    if(sorting[i] !== undefined){
+      sorted.push({topic:sorting[i],count:i});
+    }
+  }
+  return sorted;
+}
+
+exports.getAllPostsTopics = (req,res) =>{
+  Post.findAndCountAll()
+  .then(all => {
+    let Posts = all.rows;
+    let topics = [];
+    let ok = false;
+    let id = 0;
+    let sent = false;
+    Posts.map(post =>{
+      console.log(post.topic)
+      Post.findAndCountAll({where:{topic:String(post.topic)}})
+      .then(result =>{
+        id++;
+
+        if(topics.length === 0 && post.topic !== "general"){
+          topics.push({topic: post.topic,count: result.count});
+        }
+        else{
+          for(let i = 0; i < topics.length; i++){
+            if(post.topic !== "general" && JSON.stringify(topics[i]) !== JSON.stringify({topic: post.topic,count: result.count})){
+              topics.push({topic: post.topic,count: result.count});
+              break;
+            }
+          }
+        }
+        
+        if(id === all.count && !sent){
+          sent = true;
+          sortTopics(topics).then((sorted)=>{
+            return res.status(200).json(sorted);
+          })
+        }
+        
+      });
+    })
+  })
+  .catch(error => res.status(500).json({ error }));
+}
