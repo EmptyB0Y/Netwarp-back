@@ -123,7 +123,7 @@ exports.upvoteComment = async (req, res) => {
     let like = false;
 
     if(profileLike.id === profile.id){
-      res.status(400).json({message: "Vous ne pouvez pas upvoter votre propre commentaire"});
+      return res.status(400).json({message: "Vous ne pouvez pas upvoter votre propre commentaire"});
     }
     if(!upvotes.includes(profileLike.id)) {
       upvotes.push(profileLike.id);
