@@ -37,7 +37,8 @@ exports.login = (req,res) =>{
             process.env.JSON_TOKEN,
             { expiresIn: '24h' }
           ),
-          profileId: user.ProfileId
+          profileId: user.ProfileId,
+          access: user.access
         });
       })
       .catch(error => res.status(500).json({ error }));
