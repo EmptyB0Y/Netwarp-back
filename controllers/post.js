@@ -42,6 +42,19 @@ exports.createPost = (req, res) => {
 };
 
 // Retrieve all posts from the database
+exports.findAllPosts = (req, res) => {
+  Post.findAll()
+    .then(posts => {
+      res.status(200).json(posts);
+    })
+    .catch(err => {
+      res.status(500).json({
+        message:
+          err.message || "Une erreur est survenue lors de la récupération des posts."
+      });
+    });
+};
+
 exports.findAllPostsByProfile = (req, res) => {
   Post.findAll({where:{ProfileId : req.params.id}, include: ['Mission', 'Profile'] })
     .then(posts => {

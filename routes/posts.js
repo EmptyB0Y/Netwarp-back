@@ -6,6 +6,7 @@ const postCtrl = require('../controllers/post');
 const auth = require('../middlewares/auth');
 const upload = require('../middlewares/upload');
 
+router.get('/', postCtrl.findAllPosts);
 router.get('/topics/', postCtrl.getAllPostsTopics);
 router.get('/:id/comments', commentCtrl.getCommentsByPost);
 router.get('/:id', postCtrl.findPost);
