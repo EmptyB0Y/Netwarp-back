@@ -6,7 +6,7 @@ const auth = require('../middlewares/auth');
 const upload = require('../middlewares/upload');
 
 //router.get('/', auth, missionCtrl.getAllComments);    
-router.get('/:id/comments', commentCtrl.getCommentsByComment)
+router.get('/:id/comments', commentCtrl.getCommentsByComment);
 router.get('/:id', commentCtrl.getCommentById);
 router.post('/', auth, commentCtrl.createComment);
 // router.put('/:id', auth, missionCtrl.editComment);

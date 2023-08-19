@@ -12,14 +12,14 @@ exports.createComment = async (req, res) => {
     let name = "comment";
 
     if(com){
-      profileCommented = await Comment.findByPk(com.ProfileId);
+      profileCommented = await Profile.findByPk(com.ProfileId);
     }
     else if(post){
       profileCommented = await Profile.findByPk(post.ProfileId);
       name = "post"
     }
     else{
-      return res.status(404).json({ message : "Post ou commentaire non trouvé"});
+      return res.status(404).json({ message : "Publication ou commentaire non trouvé"});
 
     }
     
