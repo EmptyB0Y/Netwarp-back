@@ -1,4 +1,4 @@
-const { Comment, Profile, Post, Notification } = require('../models');
+const { Comment, Profile, Post, Notification, Photo } = require('../models');
 
 exports.createComment = async (req, res) => {
   try {
@@ -172,5 +172,75 @@ exports.deleteComment = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getPhotos = async (req, res) => {
+  
+  const { id } = req.params;
+  try{
+    let photos = await Photo.findAll({where: {CommentId: id}});
+
+    res.json(photos);
+
+  } catch (error) {
+    console.error(err);
+    res.status(500).json({ error : err });
+  }
+};
+
+exports.uploadPhoto = async (req, res) => {
+
+  const { id } = req.params;
+  try {
+    let comment = await Comment.findByPk(id);
+    if (!comment) {
+      return res.status(404).json({ message: 'Commentaire non trouvée' });
+    }
+    if(!req.file){
+      return res.status(400).json({ message: 'Fichier manquant' });
+    }
+
+    let profile = await Profile.findByPk(comment.ProfileId);
+    if(profile.UserId !== res.locals.userId && !res.locals.isAdmin){
+      res.status(403).json({ message: 'Vous ne pouvez pas accéder à ce commentaire' });
+    }
+
+    let photo = await Photo.create({
+      CommentId: comment.id,
+      url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    });
+
+    res.status(201).json(photo);
+  } catch (error) {
+    console.error(err);
+    res.status(500).json({ error : err });
+  }
+};
+
+exports.deletePhoto = async (req, res) => {
+  const { id } = req.params;
+  try {
+    let photo = await Photo.findByPk(id);
+    let comment = await Comment.findByPk(photo.CommentId);
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Commentaire non trouvé' });
+    }
+
+    let profile = await Profile.findByPk(comment.ProfileId);
+    if(profile.UserId !== res.locals.userId && !res.locals.isAdmin){
+      res.status(403).json({ message: 'Vous ne pouvez pas accéder à ce commentaire' });
+    }
+    fs.unlink('./images/' + photo.url.split('/images/')[1], (err) => {
+      if (err) {
+        console.error(err)
+      }
+    })
+    await photo.destroy();
+    res.status(204).json();
+  } catch (error) {
+    console.error(err);
+    res.status(500).json({ error : err });
   }
 };

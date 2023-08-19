@@ -42,8 +42,7 @@ app.use('/posts', postRouter);
 app.use('/missions', missionRouter);
 app.use('/comments', commentaireRouter);
 app.use('/images/default', express.static(path.join(__dirname, 'images/default')));
-app.use('/images/posts', express.static(path.join(__dirname, 'images/posts')));
-app.use('/images/comments', express.static(path.join(__dirname, 'images/comments')));
+app.use('/images', express.static(path.join(__dirname, 'images/bin/')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

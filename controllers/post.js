@@ -172,6 +172,19 @@ exports.deletePost = (req, res) => {
   });
 };
 
+exports.getPhotos = async (req, res) => {
+
+  const { id } = req.params;
+  try{
+    let photos = await Photo.findAll({where: {PostId: id}});
+
+    res.json(photos);
+  } catch (error) {
+    console.error(err);
+    res.status(500).json({ error : err });
+  }
+};
+
 exports.uploadPhoto = async (req, res) => {
 
   const { id } = req.params;
@@ -185,8 +198,10 @@ exports.uploadPhoto = async (req, res) => {
     }
 
     let profile = await Profile.findByPk(post.ProfileId);
+    console.log(profile.UserId)
+    console.log(res.locals.userId)
     if(profile.UserId !== res.locals.userId && !res.locals.isAdmin){
-      res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
+      return res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette publication' });
     }
 
     let photo = await Photo.create({
@@ -196,8 +211,8 @@ exports.uploadPhoto = async (req, res) => {
 
     res.status(201).json(photo);
   } catch (error) {
-    console.error(err);
-    res.status(500).json({ error : err });
+    console.error(error);
+    res.status(500).json({ error : error });
   }
 };
 
@@ -213,7 +228,7 @@ exports.deletePhoto = async (req, res) => {
 
     let profile = await Profile.findByPk(post.ProfileId);
     if(profile.UserId !== res.locals.userId && !res.locals.isAdmin){
-      res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette mission' });
+      res.status(403).json({ message: 'Vous ne pouvez pas accéder à cette publication' });
     }
     fs.unlink('./images/' + photo.url.split('/images/')[1], (err) => {
       if (err) {

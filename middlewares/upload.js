@@ -8,8 +8,8 @@ const MIME_TYPES = {
 };
 
 try {
-  if (!fs.existsSync("./images")) {
-    fs.mkdirSync("./images");
+  if (!fs.existsSync("./images/bin")) {
+    fs.mkdirSync("./images/bin");
   }
 } catch(e) {
   console.log("An error occurred.")
@@ -17,7 +17,7 @@ try {
 
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
-    callback(null, 'images');
+    callback(null, 'images/bin');
   },
   filename: (req, file, callback) => {
     const name = file.originalname.split(' ').join('_');
