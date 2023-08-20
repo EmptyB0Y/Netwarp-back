@@ -5,17 +5,27 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const {sequelize, Sequelize} = require('./models/index');
 var cors = require('cors');
+const expressRateLimit = require('express-rate-limit');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const profileRouter = require('./routes/profiles');
 const postRouter = require('./routes/posts');
 const missionRouter = require('./routes/missions');
-const commentaireRouter = require('./routes/comment');
+const commentaireRouter = require('./routes/comments');
 
 var app = express();
 
 sequelize.sync();
+
+const apiRequestLimiter = expressRateLimit({
+  windowMs: 5 * 60 * 1000, //request window : 5 minutes
+  max: 10000, //max requests that can be sent by each ip address in the request window (1000 requests in 15 minutes)
+  message: "Too much requests !"
+});
+
+//Limit requests
+app.use(apiRequestLimiter);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
