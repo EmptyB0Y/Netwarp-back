@@ -145,6 +145,17 @@ exports.upvoteComment = async (req, res) => {
         target: "profile "+ profileLike.id
       });
     }
+    let likes = 0;
+    profileComments = await Comment.findAll({where: {ProfileId: profile.id}})
+
+    for(let i = 0; i < profileComments.length; i++){
+
+      let pcUp = JSON.parse(profileComments[i].upvotes);
+      likes += pcUp.length
+    }
+
+    profile.relevance = (likes / profileComments.length) * 100
+    await profile.save();
 
     res.json(comment);
   } catch (error) {
