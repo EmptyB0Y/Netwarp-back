@@ -6,6 +6,7 @@ var logger = require('morgan');
 const {sequelize, Sequelize} = require('./models/index');
 var cors = require('cors');
 const expressRateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -26,6 +27,8 @@ const apiRequestLimiter = expressRateLimit({
 
 //Limit requests
 app.use(apiRequestLimiter);
+
+app.use(helmet());
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
