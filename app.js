@@ -24,6 +24,7 @@ const apiRequestLimiter = expressRateLimit({
   max: 10000, //max requests that can be sent by each ip address in the request window (1000 requests in 15 minutes)
   message: "Too much requests !"
 });
+app.set('trust proxy', 1)
 
 //Limit requests
 app.use(apiRequestLimiter);
