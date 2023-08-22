@@ -152,6 +152,9 @@ exports.deleteUser = async (req, res) =>{
 
   await User.findOne({where:{id : String(req.params.id)}})
   .then((user) =>{
+    if(!req.body.password){
+      return res.status(400).json({ message: 'Vous devez fournir le mot de passe !' });
+    }
     if(!res.locals.isAdmin && user.id !== res.locals.userId){
       return res.status(403).json({message: "Forbidden !"});
     }
