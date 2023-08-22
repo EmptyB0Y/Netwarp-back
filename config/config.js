@@ -10,7 +10,7 @@ module.exports = {
     storage: "./sqlite-test.db"
   },
   production: {
-    url: process.env.DATABASE_URL,
-    dialect: 'postgres',
+    dialect: "sqlite",
+    storage: "./sqlite-dev.db"
   },
 };
