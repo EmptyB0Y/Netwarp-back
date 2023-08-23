@@ -1,6 +1,7 @@
 const { Comment, Profile, Post, Notification, Photo } = require('../models');
 
 exports.createComment = async (req, res) => {
+  
   try {
     const { content, postId, commentId } = req.body;
 
