@@ -57,7 +57,7 @@ describe('Login', () => {
             password: "#P4ssw0rd"
         }
       });
-      console.log(res)
+
       expect(res.status).toBe(204)
 
     });
