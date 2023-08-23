@@ -41,8 +41,10 @@ app.use(cookieParser());
 
 app.use(helmet());
 
-app.use(cors());
-
+app.use(cors({
+  origin:['https://warp-front.onrender.com','https://warp-api-2.onrender.com'],
+  credentials:true
+}));
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization, multipart/form-data, JSON');
