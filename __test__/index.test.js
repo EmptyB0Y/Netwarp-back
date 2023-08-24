@@ -1,7 +1,7 @@
 const axios = require('axios');
 const url = '127.0.0.1'
 
-const axiosInstance = axios.create({baseURL: 'http://'+url+":3000"})
+const axiosInstance = axios.create({baseURL: 'http://'+url})
 let userId = 0
 let token = ""
 
