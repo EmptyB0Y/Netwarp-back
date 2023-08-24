@@ -4,6 +4,7 @@ const url = '127.0.0.1'
 const axiosInstance = axios.create({baseURL: 'http://'+url+":3000"})
 let userId = 0
 let token = ""
+
 describe('Signup', () => {
   test('All parameters have valid format', async () => {
     const res = await axiosInstance.post('/auth/signup', {
