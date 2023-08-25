@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "prod": "node ./bin/www",
     "start": "nodemon ./bin/www",
     "sequelize": "powershell ./node_modules/.bin/sequelize.cmd",
     "test": "jest"
