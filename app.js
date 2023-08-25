@@ -41,6 +41,8 @@ app.use(cookieParser());
 
 app.use(helmet());
 
+app.use(cors());
+
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', 'https://warp-front.onrender.com');
 
