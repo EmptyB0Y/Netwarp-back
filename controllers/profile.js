@@ -83,7 +83,7 @@ exports.editProfile = (req, res) => {
     }
 
     Profile.update({...ProfileUpdated}, {where: {id : profile.id}}).then(profileUpdated => {
-      res.status(201).json(profileUpdated);
+      res.status(201).json(ProfileUpdated);
     })
     .catch((e) => {
       res.status(500).json(e)
