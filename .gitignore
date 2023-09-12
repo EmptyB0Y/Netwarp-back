@@ -1,3 +1,4 @@
 /node_modules/
 /sqlite-dev.db
+/sqlite-prod.db
 /images/bin/
